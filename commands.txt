@@ -1,2 +1,13 @@
 failed installations
  - npm install --save redis @nestjs/redis bullmq
+
+ custom decorators:
+    import { SetMetadata } from '@nestjs/common';
+    export const Roles = (...roles: string[]) => SetMetadata('roles', roles);
+
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
+    @Get('admin-data')
+    getAdminData() {
+    return { secret: 'Only admin can see this' };
+    }

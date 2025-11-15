@@ -6,6 +6,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { sequelize } from './database/sequelize.config';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
+import { UsersModule } from './users/users.module';
 
 
 
@@ -17,7 +18,8 @@ import { ConfigModule } from '@nestjs/config';
     }),
     SequelizeModule.forRoot({ ...sequelize.options }),
     AuthModule,
-    NotificationModule],
+    NotificationModule,
+    UsersModule],
   controllers: [AppController],
   providers: [AppService],
 })
