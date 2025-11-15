@@ -3,31 +3,46 @@ import { UsersService } from '../users/users.service';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/models/users.model';
+import { RegisterDto } from './dto/register.dto';
+import { ConfigService } from '@nestjs/config/dist/config.service';
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-  ) {}
+    private configService: ConfigService,
+  ) { }
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(email: string, _password: string): Promise<User> {
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const passwordValid = await bcrypt.compare(password, user.password);
+    const passwordValid = await bcrypt.compare(_password, user.password);
     if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
 
-    return user;
+    const { password, roles, isActive, ...rest } = user; // remove password before returning
+
+    return rest as User;
   }
 
   async login(user: User) {
     const payload = { sub: user.id, email: user.email, roles: user.roles };
     const accessToken = this.jwtService.sign(payload);
-    const refreshToken = this.jwtService.sign(payload, { expiresIn: '7d' });
+    const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
   }
+ 
 
-  async register(data: any) {
+  async generateRefreshToken(user: User) {
+    return this.jwtService.sign(
+      { sub: user.id },
+      {
+        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+        expiresIn: 7 * 24 * 60 * 60, // 7 days
+      },
+    );
+  }
+  async register(data: RegisterDto) {
     const user = await this.usersService.create(data);
     return this.login(user);
   }

@@ -14,8 +14,8 @@ import { User } from 'src/users/models/users.model';
     UsersModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '24h' }, // Access token expiration
+      secret: process.env.JWT_SECRET || 'yout_jwt_secret_key',
+      signOptions: { expiresIn: 24 * 60 * 60 }, // 24 hours
     }),
   ],
   providers: [AuthService, JwtStrategy],

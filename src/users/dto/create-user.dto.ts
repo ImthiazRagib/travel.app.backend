@@ -1,21 +1,21 @@
-import { IsArray, IsBoolean, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
+// import { IsArray, IsBoolean, IsEmail, IsNotEmpty, MinLength } from 'class-validator';
 
-export class CreateUserDto {
-  @IsNotEmpty()
-  firstName: string;
+// export class CreateUserDto {
+//   @IsNotEmpty()
+//   firstName: string;
 
-  @IsNotEmpty()
-  lastName: string;
+//   @IsNotEmpty()
+//   lastName: string;
 
-  @IsEmail()
-  email: string;
+//   @IsEmail()
+//   email: string;
 
-  @MinLength(6)
-  password: string;
+//   @MinLength(6)
+//   password: string;
 
-  @IsArray()
-  roles: string[];
+//   @IsArray()
+//   roles: string[];
 
-  @IsBoolean()
-  isActive: boolean;
-}
+//   @IsBoolean()
+//   isActive: boolean;
+// }

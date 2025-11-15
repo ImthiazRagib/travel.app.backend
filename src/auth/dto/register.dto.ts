@@ -1,21 +1,21 @@
-import { IsEmail, IsNotEmpty, MinLength, IsArray, IsBoolean } from 'class-validator';
+import { IsEmail, IsNotEmpty, MinLength, IsArray, IsBoolean, IsOptional, IsString, Matches } from 'class-validator';
 
 export class RegisterDto {
   @IsNotEmpty()
   firstName: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   lastName: string;
-
+  
+  @IsNotEmpty()
   @IsEmail()
   email: string;
-
+  
   @MinLength(6)
   password: string;
 
-  @IsArray()
-  roles: string[];
-
-  @IsBoolean()
-  isActive: boolean;
+  @IsOptional()
+  @IsString()
+  @Matches(/^\d+$/, { message: 'phone must contain only digits' })
+  phone: string;
 }

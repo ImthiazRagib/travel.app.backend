@@ -29,7 +29,7 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   lastName: string;
 
@@ -59,6 +59,12 @@ export class User extends Model<User> {
     type: DataType.BOOLEAN,
   })
   isActive: boolean;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone: string | null;
 
   // 2FA enabled or not
   @Default(false)
