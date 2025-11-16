@@ -27,7 +27,7 @@ export class AuthController {
     return user; // JWT payload
   }
 
-  @Post('refresh')
+  @Post('token/refresh')
   refresh(@Body() dto: RefreshTokenDto) {
     return this.authService.refreshToken(dto.refreshToken);
   }

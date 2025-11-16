@@ -4,6 +4,11 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/models/users.model';
+import { HotelsModule } from './hotels/hotels.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { PaymentsService } from './payments/payments.service';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -26,6 +31,11 @@ import { User } from './users/models/users.model';
     }),
     UsersModule,
     AuthModule,
+    HotelsModule,
+    RoomsModule,
+    BookingsModule,
+    PaymentsModule,
   ],
+  providers: [PaymentsService],
 })
 export class AppModule {}
