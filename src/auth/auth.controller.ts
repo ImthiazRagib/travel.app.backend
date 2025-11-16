@@ -4,6 +4,7 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -22,9 +23,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req: any) {
-    console.log("🚀 ~ AuthController ~ getProfile ~ req:", req)
-    return req.user; // JWT payload
+  getProfile(@CurrentUser() user: any) {
+    return user; // JWT payload
   }
 
   @Post('refresh')

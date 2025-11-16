@@ -20,13 +20,13 @@ export class AuthService {
     const passwordValid = await bcrypt.compare(_password, user.password);
     if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
 
-    const { password, roles, isActive, ...rest } = user; // remove password before returning
+    const { password, isActive, ...rest } = user; // remove password before returning
 
     return rest as User;
   }
 
   async login(user: User) {
-    const accessToken = this.generateAccessToken(user);
+    const accessToken = await this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
   }
@@ -39,14 +39,14 @@ export class AuthService {
       const user = await this.usersService.findById(payload.sub);
       if (!user) throw new UnauthorizedException();
       return {
-        accessToken: this.generateAccessToken(user),
-        refreshToken: this.generateRefreshToken(user),
+        accessToken: await this.generateAccessToken(user),
+        refreshToken: await this.generateRefreshToken(user),
       };
     } catch (err) {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
-  
+
   async generateAccessToken(user: User) {
     const payload = { sub: user.id, email: user.email, roles: user.roles };
     return this.jwtService.sign(payload);
@@ -57,7 +57,7 @@ export class AuthService {
     return this.jwtService.sign(
       { sub: user.id },
       {
-        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET'),
+        secret: this.configService.get<string>('REFRESH_TOKEN_SECRET') as string || 'your_refresh_token_secret',
         expiresIn: 7 * 24 * 60 * 60, // 7 days
       },
     );
