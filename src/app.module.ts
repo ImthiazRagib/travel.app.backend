@@ -1,46 +1,31 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { sequelize } from './database/sequelize.config';
-import { NotificationModule } from './notification/notification.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { User } from './users/models/users.model';
 
-
-
 @Module({
   imports: [
-    // Load environment variables
-    ConfigModule.forRoot({
-      isGlobal: true, // make it available in all modules
-      envFilePath: '.env', // explicitly specify the env file path
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
     SequelizeModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-      dialect: 'postgres',
-      host: configService.get<string>('DB_HOST'),
-      port: configService.get<number>('DB_PORT'),
-      username: configService.get<string>('DB_USER'),
-      password: configService.get<string>('DB_PASS'),
-      database: configService.get<string>('DB_NAME'),
-      models: [User],
-      autoLoadModels: true, // auto-register models
-      synchronize: true,   // auto-create/update tables
-      // logging: true,
-      alter: true, // update columns added after
+      useFactory: (config: ConfigService) => ({
+        dialect: 'postgres',
+        host: config.get<string>('DB_HOST'),
+        port: Number(config.get<string>('DB_PORT')) || 5432,
+        username: config.get<string>('DB_USER'),
+        password: config.get<string>('DB_PASS'),
+        database: config.get<string>('DB_NAME'),
+        models: [User],
+        autoLoadModels: true,
+        synchronize: true,
+        // logging: true,
       }),
     }),
+    UsersModule,
     AuthModule,
-    NotificationModule,
-    UsersModule],
-    controllers: [AppController],
-    providers: [AppService],
-  })
-  export class AppModule {
-  constructor(private configService: ConfigService) { }
-}
+  ],
+})
+export class AppModule {}

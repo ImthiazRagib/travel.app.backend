@@ -26,10 +26,30 @@ export class AuthService {
   }
 
   async login(user: User) {
-    const payload = { sub: user.id, email: user.email, roles: user.roles };
-    const accessToken = this.jwtService.sign(payload);
+    const accessToken = this.generateAccessToken(user);
     const refreshToken = await this.generateRefreshToken(user);
     return { accessToken, refreshToken };
+  }
+
+  async refreshToken(token: string) {
+    try {
+      const payload = this.jwtService.verify(token, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
+      });
+      const user = await this.usersService.findById(payload.sub);
+      if (!user) throw new UnauthorizedException();
+      return {
+        accessToken: this.generateAccessToken(user),
+        refreshToken: this.generateRefreshToken(user),
+      };
+    } catch (err) {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+  
+  async generateAccessToken(user: User) {
+    const payload = { sub: user.id, email: user.email, roles: user.roles };
+    return this.jwtService.sign(payload);
   }
  
 
@@ -42,6 +62,8 @@ export class AuthService {
       },
     );
   }
+
+
   async register(data: RegisterDto) {
     const user = await this.usersService.create(data);
     return this.login(user);

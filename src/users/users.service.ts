@@ -31,6 +31,7 @@ export class UsersService {
     }
 
     async findById(id: string) {
-        return this.userModel.findByPk(id);
+        const user = await this.userModel.findByPk(id);
+        return user?.get({ plain: true });
     }
 }

@@ -1,15 +1,16 @@
 import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { RolesGuard } from '../common/guards/roles.guard';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.jwt';
 import { Roles } from 'src/common/decorator/roles.decorator';
+import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UsersController {
   // Anyone logged in
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req:any) {
-    return req.user;
+  getProfile(@CurrentUser() user:any) {
+    return user;
   }
 
   // Only admin users
