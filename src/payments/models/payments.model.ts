@@ -9,12 +9,8 @@ import {
   BelongsTo,
 } from 'sequelize-typescript';
 import { Booking } from 'src/bookings/models/bookings.model';
-
-export enum PaymentStatus {
-  PENDING = 'pending',
-  PAID = 'paid',
-  FAILED = 'failed',
-}
+import { PaymentStatus, ProviderEnum } from '../enums/payment.enum';
+import { TransactionDirection } from 'src/transactions/enums/transactions.enum';
 
 @Table({
   tableName: 'payments',
@@ -31,11 +27,24 @@ export class Payment extends Model<Payment> {
   @Column({ type: DataType.UUID, allowNull: false })
   bookingId: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @Column({ type: DataType.STRING, allowNull: true })
   cardNumber: string; // optionally store masked card e.g., **** **** **** 1234
 
   @Column({ type: DataType.FLOAT, allowNull: false })
   amount: number;
+
+  /** PAYMENT PROVIDER (stripe, paypal, etc.) */
+  @Column({
+    type: DataType.ENUM(...Object.values(ProviderEnum)),
+    allowNull: false,
+  })
+  provider: ProviderEnum;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(TransactionDirection)),
+    allowNull: false,
+  })
+  direction: TransactionDirection;
 
   @Column({
     type: DataType.ENUM(...Object.values(PaymentStatus)),

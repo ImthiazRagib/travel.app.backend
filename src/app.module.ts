@@ -10,6 +10,12 @@ import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsService } from './payments/payments.service';
 import { PaymentsModule } from './payments/payments.module';
 import { TransactionsModule } from './transactions/transactions.module';
+import { Hotel } from './hotels/models/hotels.model';
+import { Room } from './rooms/models/rooms.model';
+import { Booking } from './bookings/models/bookings.model';
+import { Location } from './locations/models/location.model';
+import { Payment } from './payments/models/payments.model';
+import { Transaction } from './transactions/model/transactions.model';
 
 @Module({
   imports: [
@@ -24,7 +30,15 @@ import { TransactionsModule } from './transactions/transactions.module';
         username: config.get<string>('DB_USER'),
         password: config.get<string>('DB_PASS'),
         database: config.get<string>('DB_NAME'),
-        models: [User],
+        models: [
+          User,
+          Hotel,
+          Room,
+          Booking,
+          Location,
+          Payment,
+          Transaction,
+        ],
         autoLoadModels: true,
         synchronize: true,
         // logging: true,

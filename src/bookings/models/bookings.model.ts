@@ -10,11 +10,12 @@ import {
   HasMany,
 } from 'sequelize-typescript';
 import { Hotel } from 'src/hotels/models/hotels.model';
-import { Payment, PaymentStatus } from 'src/payments/models/payments.model';
+import { Payment } from 'src/payments/models/payments.model';
 import { Room } from 'src/rooms/models/rooms.model';
 import { User } from 'src/users/models/users.model';
 import { BookingCategory, BookingStatus } from '../enums/bookings.enum';
-import { PaymentMethod } from 'src/transactions/enums/payments.enums';
+import { PaymentMethod, PaymentStatus } from 'src/payments/enums/payment.enum';
+import { Transaction } from 'src/transactions/model/transactions.model';
 
 @Table({
   tableName: 'bookings',
@@ -30,10 +31,10 @@ export class Booking extends Model<Booking> {
 
   @ForeignKey(() => User)
   @Column(DataType.UUID)
-  userId: string;
+  customerId: string;
 
   @BelongsTo(() => User)
-  user: User;
+  customer: User;
 
   @ForeignKey(() => Hotel)
   @Column(DataType.UUID)
@@ -93,7 +94,11 @@ export class Booking extends Model<Booking> {
   @HasMany(() => Payment, 'bookingId')
   payments: Payment[];
 
-  @Column(DataType.STRING)
+  @ForeignKey(() => Transaction)
+  @Column(DataType.UUID)
   transactionId: string;
+
+  @BelongsTo(() => Transaction)
+  transaction: Transaction;
 }
 

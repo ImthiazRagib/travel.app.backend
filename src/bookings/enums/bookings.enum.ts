@@ -3,6 +3,11 @@ export enum BookingCategory {
   ROOM = 'room',
   TOUR = 'tour',
   FLIGHT = 'flight',
+  CAR_RENTAL = 'car_rental',
+  CLUB_MEMBERSHIP = 'club_membership',
+  CLUB = 'club',
+  EVENT = 'event',
+  HALL = 'hall',
 }
 
 export enum BookingStatus {

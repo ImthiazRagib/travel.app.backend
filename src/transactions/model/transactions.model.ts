@@ -11,7 +11,7 @@ import {
 import { Booking } from 'src/bookings/models/bookings.model';
 import { User } from 'src/users/models/users.model';
 import { TransactionDirection, TransactionStatus } from '../enums/transactions.enum';
-import { PaymentMethod } from '../enums/payments.enums';
+import { Payment } from 'src/payments/models/payments.model';
 
 @Table({
     tableName: 'transactions',
@@ -41,16 +41,13 @@ export class Transaction extends Model<Transaction> {
     @BelongsTo(() => Booking)
     booking: Booking;
 
-    /** PAYMENT PROVIDER (stripe, paypal, etc.) */
-    @Column(DataType.STRING)
-    provider: string;
 
-    /** Payment method type (card, applePay, wallet, etc.) */
-    @Column({
-        type: DataType.ENUM(...Object.values(PaymentMethod)),
-        allowNull: false,
-    })
-    method: PaymentMethod;
+    @ForeignKey(() => Payment)
+    @Column(DataType.UUID)
+    paymentId: string;
+
+    @BelongsTo(() => Payment)
+    payment: Payment;
 
     /** Transaction type (payment, refund, etc.) */
     @Column(DataType.STRING)
@@ -91,6 +88,11 @@ export class Transaction extends Model<Transaction> {
     /** Refund reference */
     @Column(DataType.STRING)
     refundReference: string;
+
+    /** Associated transaction ID */
+    @Column({ type: DataType.STRING, allowNull: false })
+    txnId: string;
+
 
     /** Notes for manual payments or cash */
     @Column(DataType.TEXT)
