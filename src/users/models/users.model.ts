@@ -8,6 +8,8 @@ import {
   IsEmail,
 } from 'sequelize-typescript';
 import { EnumRoles } from '../enums/roles.enum';
+import { HasMany } from 'sequelize-typescript';
+import { Hotel } from '../../hotels/models/hotels.model';
 
 @Table({
   tableName: 'users',
@@ -80,4 +82,7 @@ export class User extends Model<User> {
     allowNull: true,
   })
   twoFactorSecret: string | null;
+
+  @HasMany(() => Hotel)
+  hotels: Hotel[];
 }

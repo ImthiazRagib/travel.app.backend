@@ -9,6 +9,7 @@ import { RoomsModule } from './rooms/rooms.module';
 import { BookingsModule } from './bookings/bookings.module';
 import { PaymentsService } from './payments/payments.service';
 import { PaymentsModule } from './payments/payments.module';
+import { TransactionsModule } from './transactions/transactions.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PaymentsModule } from './payments/payments.module';
     RoomsModule,
     BookingsModule,
     PaymentsModule,
+    TransactionsModule,
   ],
   providers: [PaymentsService],
 })
