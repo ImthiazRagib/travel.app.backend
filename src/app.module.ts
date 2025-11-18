@@ -1,26 +1,41 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { sequelize } from './database/sequelize.config';
-import { NotificationModule } from './notification/notification.module';
-import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
-
-
+import { User } from './users/models/users.model';
+import { HotelsModule } from './hotels/hotels.module';
+import { RoomsModule } from './rooms/rooms.module';
+import { BookingsModule } from './bookings/bookings.module';
+import { PaymentsService } from './payments/payments.service';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
-    // Load environment variables
-    ConfigModule.forRoot({
-      isGlobal: true, // make it available in all modules
+    ConfigModule.forRoot({ isGlobal: true }),
+    SequelizeModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        dialect: 'postgres',
+        host: config.get<string>('DB_HOST'),
+        port: Number(config.get<string>('DB_PORT')) || 5432,
+        username: config.get<string>('DB_USER'),
+        password: config.get<string>('DB_PASS'),
+        database: config.get<string>('DB_NAME'),
+        models: [User],
+        autoLoadModels: true,
+        synchronize: true,
+        // logging: true,
+      }),
     }),
-    SequelizeModule.forRoot({ ...sequelize.options }),
+    UsersModule,
     AuthModule,
-    NotificationModule,
-    UsersModule],
-  controllers: [AppController],
-  providers: [AppService],
+    HotelsModule,
+    RoomsModule,
+    BookingsModule,
+    PaymentsModule,
+  ],
+  providers: [PaymentsService],
 })
-export class AppModule { }
+export class AppModule {}

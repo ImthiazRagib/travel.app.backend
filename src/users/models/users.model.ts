@@ -7,6 +7,7 @@ import {
   Default,
   IsEmail,
 } from 'sequelize-typescript';
+import { EnumRoles } from '../enums/roles.enum';
 
 @Table({
   tableName: 'users',
@@ -29,7 +30,7 @@ export class User extends Model<User> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   lastName: string;
 
@@ -47,18 +48,24 @@ export class User extends Model<User> {
   })
   password: string;
 
-  // Multiple roles: ['user', 'admin', 'manager']
-  @Default(['user'])
+  // Multiple roles: ['user', 'admin', 'manager', 'superadmin']
+  @Default([EnumRoles.USER])
   @Column({
     type: DataType.ARRAY(DataType.STRING),
   })
-  roles: string[];
+  roles: EnumRoles[];
 
   @Default(true)
   @Column({
     type: DataType.BOOLEAN,
   })
   isActive: boolean;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  phone: string | null;
 
   // 2FA enabled or not
   @Default(false)
