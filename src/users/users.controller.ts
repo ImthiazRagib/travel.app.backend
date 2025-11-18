@@ -3,6 +3,7 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { EnumRoles } from './enums/roles.enum';
 
 @Controller('users')
 export class UsersController {
@@ -15,18 +16,18 @@ export class UsersController {
 
   // Only admin users
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin')
+  @Roles(EnumRoles.ADMIN)
   @Get('all')
   getAllUsers() {
     return [
-      { id: 1, email: 'admin@example.com', roles: ['admin'] },
-      { id: 2, email: 'user@example.com', roles: ['user'] },
+      { id: 1, email: 'admin@example.com', roles: [EnumRoles.ADMIN] },
+      { id: 2, email: 'user@example.com', roles: [EnumRoles.USER] },
     ];
   }
 
   // Admin or manager
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles('admin', 'manager')
+  @Roles(EnumRoles.ADMIN, EnumRoles.MANAGER)
   @Get('dashboard')
   getDashboardData() {
     return { secret: 'Only admins or managers can see this' };
