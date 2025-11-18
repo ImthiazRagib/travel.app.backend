@@ -1,12 +1,12 @@
 import {
-    Table,
-    Model,
-    Column,
-    DataType,
-    PrimaryKey,
-    Default,
-    ForeignKey,
-    BelongsTo,
+  Table,
+  Model,
+  Column,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
 import { Booking } from 'src/bookings/models/bookings.model';
 import { User } from 'src/users/models/users.model';
@@ -14,87 +14,74 @@ import { TransactionDirection, TransactionStatus } from '../enums/transactions.e
 import { Payment } from 'src/payments/models/payments.model';
 
 @Table({
-    tableName: 'transactions',
-    paranoid: true,
-    timestamps: true,
-    underscored: true,
+  tableName: 'transactions',
+  paranoid: true,
+  timestamps: true,
+  underscored: true,
 })
 export class Transaction extends Model<Transaction> {
-    @PrimaryKey
-    @Default(DataType.UUIDV4)
-    @Column(DataType.UUID)
-    declare id: string;
+  @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  declare id: string;
 
-    /** USER WHO PAID */
-    @ForeignKey(() => User)
-    @Column(DataType.UUID)
-    userId: string;
+  @ForeignKey(() => User)
+  @Column({ type: DataType.UUID, allowNull: false })
+  userId: string;
 
-    @BelongsTo(() => User)
-    user: User;
+  @BelongsTo(() => User)
+  user: User;
 
-    /** BOOKING LINK (OPTIONAL) */
-    @ForeignKey(() => Booking)
-    @Column(DataType.UUID)
-    bookingId: string;
+  @ForeignKey(() => Booking)
+  @Column({ type: DataType.UUID, allowNull: true })
+  bookingId: string;
 
-    @BelongsTo(() => Booking)
-    booking: Booking;
+  @BelongsTo(() => Booking)
+  booking: Booking;
 
+  @ForeignKey(() => Payment)
+  @Column({ type: DataType.UUID, allowNull: true })
+  paymentId: string;
 
-    @ForeignKey(() => Payment)
-    @Column(DataType.UUID)
-    paymentId: string;
+  @BelongsTo(() => Payment)
+  payment: Payment;
 
-    @BelongsTo(() => Payment)
-    payment: Payment;
+  @Column({ type: DataType.STRING, allowNull: false })
+  type: string;
 
-    /** Transaction type (payment, refund, etc.) */
-    @Column(DataType.STRING)
-    type: string; // Or use an enum if you have TransactionType
+  @Column({
+    type: DataType.ENUM(...Object.values(TransactionDirection))
+  })
+  direction: TransactionDirection;
 
-    /** Transaction direction (inbound, outbound, etc.) */
-    @Column({
-        type: DataType.ENUM(...Object.values(TransactionDirection)),
-        allowNull: false,
-    })
-    direction: TransactionDirection;
+  @Column({ type: DataType.DECIMAL, allowNull: false })
+  amount: number;
 
-    /** Amount paid */
-    @Column(DataType.DECIMAL)
-    amount: number;
+  @Column({ type: DataType.STRING, allowNull: false })
+  currency: string;
 
-    /** Currency (ISO format) */
-    @Column(DataType.STRING)
-    currency: string; // USD, AED, EUR
+  @Column({
+    type: DataType.ENUM(...Object.values(TransactionStatus)),
+    allowNull: false,
+  })
+  status: TransactionStatus;
 
-    /** Status of payment */
-    @Column(DataType.ENUM(...Object.values(TransactionStatus)))
-    status: TransactionStatus;
+  @Column({ type: DataType.STRING, allowNull: true })
+  transactionReference: string;
 
-    /** Gateway reference (Stripe charge ID, PayPal ID, etc.) */
-    @Column(DataType.STRING)
-    transactionReference: string;
+  // @Column({ type: DataType.JSONB, defaultValue: () => ({}) })
+  // metadata: object;
 
-    /** Custom meta depending on provider */
-    @Column(DataType.JSONB)
-    metadata: object;
+  @Default(false)
+  @Column({ type: DataType.BOOLEAN })
+  isRefunded: boolean;
 
-    /** Whether refunded */
-    @Default(false)
-    @Column(DataType.BOOLEAN)
-    isRefunded: boolean;
+  @Column({ type: DataType.STRING, allowNull: true })
+  refundReference: string;
 
-    /** Refund reference */
-    @Column(DataType.STRING)
-    refundReference: string;
+  @Column({ type: DataType.STRING, allowNull: false })
+  txnId: string;
 
-    /** Associated transaction ID */
-    @Column({ type: DataType.STRING, allowNull: false })
-    txnId: string;
-
-
-    /** Notes for manual payments or cash */
-    @Column(DataType.TEXT)
-    notes: string;
+  @Column({ type: DataType.TEXT, allowNull: true })
+  notes: string;
 }

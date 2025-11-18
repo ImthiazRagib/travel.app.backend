@@ -28,21 +28,18 @@ export class Payment extends Model<Payment> {
   bookingId: string;
 
   @Column({ type: DataType.STRING, allowNull: true })
-  cardNumber: string; // optionally store masked card e.g., **** **** **** 1234
+  cardNumber: string;
 
   @Column({ type: DataType.FLOAT, allowNull: false })
   amount: number;
 
-  /** PAYMENT PROVIDER (stripe, paypal, etc.) */
   @Column({
-    type: DataType.ENUM(...Object.values(ProviderEnum)),
-    allowNull: false,
+    type: DataType.ENUM(...Object.values(ProviderEnum))
   })
   provider: ProviderEnum;
 
   @Column({
-    type: DataType.ENUM(...Object.values(TransactionDirection)),
-    allowNull: false,
+    type: DataType.ENUM(...Object.values(TransactionDirection))
   })
   direction: TransactionDirection;
 

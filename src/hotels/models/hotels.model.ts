@@ -55,7 +55,7 @@ export class Hotel extends Model<Hotel> {
   address: string;
 
   @ForeignKey(() => Location)
-  @Column({ type: DataType.UUID, allowNull: false })
+  @Column({ type: DataType.UUID })
   locationId: string;
 
   @BelongsTo(() => Location)
@@ -91,13 +91,16 @@ export class Hotel extends Model<Hotel> {
   @Column(DataType.JSONB)
   gallery: string[];
 
-  @Column(DataType.ENUM(...Object.values(HotelStatus)))
+  @Column({
+    type: DataType.ENUM(...Object.values(HotelStatus)),
+    defaultValue: HotelStatus.Pending,
+  })
   status: HotelStatus;
 
-  @Column(DataType.BOOLEAN)
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
   isFeatured: boolean;
 
-  @Column(DataType.BOOLEAN)
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })
   isActive: boolean;
 
   @HasMany(() => Room)

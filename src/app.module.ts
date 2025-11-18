@@ -16,6 +16,7 @@ import { Booking } from './bookings/models/bookings.model';
 import { Location } from './locations/models/location.model';
 import { Payment } from './payments/models/payments.model';
 import { Transaction } from './transactions/model/transactions.model';
+import { LocationsModule } from './locations/locations.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { Transaction } from './transactions/model/transactions.model';
     BookingsModule,
     PaymentsModule,
     TransactionsModule,
+    LocationsModule,
   ],
   providers: [PaymentsService],
 })

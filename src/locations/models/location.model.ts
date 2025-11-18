@@ -63,7 +63,7 @@ export class Location extends Model<Location> {
     isPopular: boolean; // featured locations
 
     /** Extra data (language, region info, etc.) */
-    @Column(DataType.JSONB)
+    @Column({ type: DataType.JSONB, defaultValue: ()=>({}) })
     metadata: object;
 
     @HasMany(() => Location)

@@ -30,63 +30,61 @@ export class Booking extends Model<Booking> {
   declare id: string;
 
   @ForeignKey(() => User)
-  @Column(DataType.UUID)
+  @Column({ type: DataType.UUID, allowNull: false })
   customerId: string;
 
   @BelongsTo(() => User)
   customer: User;
 
   @ForeignKey(() => Hotel)
-  @Column(DataType.UUID)
+  @Column({ type: DataType.UUID, allowNull: false })
   hotelId: string;
 
   @BelongsTo(() => Hotel)
   hotel: Hotel;
 
   @ForeignKey(() => Room)
-  @Column(DataType.UUID)
+  @Column({ type: DataType.UUID, allowNull: false })
   roomId: string;
 
   @BelongsTo(() => Room)
   room: Room;
 
-  @Column(DataType.DATEONLY)
+  @Column({ type: DataType.DATEONLY, allowNull: false })
   checkIn: string;
 
-  @Column(DataType.DATEONLY)
+  @Column({ type: DataType.DATEONLY, allowNull: false })
   checkOut: string;
 
-  @Column(DataType.INTEGER)
+  @Column({ type: DataType.INTEGER, allowNull: false })
   totalNights: number;
 
-  @Column(DataType.DECIMAL)
+  @Column({ type: DataType.DECIMAL, allowNull: false })
   totalAmount: number;
 
-  @Column(DataType.INTEGER)
+  @Column({ type: DataType.INTEGER, allowNull: false })
   guests: number;
 
-  @Column(
-    DataType.ENUM(...Object.values(PaymentStatus))
-  )
+  @Column({
+    type: DataType.ENUM(...Object.values(PaymentStatus)),
+    defaultValue: PaymentStatus.PENDING,
+  })
   paymentStatus: PaymentStatus;
 
   @Column({
     type: DataType.ENUM(...Object.values(BookingCategory)),
-    allowNull: false,
-    defaultValue: BookingCategory.ROOM, // Change to your desired default
+    defaultValue: BookingCategory.ROOM,
   })
   bookingCategory: BookingCategory;
 
   @Column({
     type: DataType.ENUM(...Object.values(BookingStatus)),
-    allowNull: false,
-    defaultValue: BookingStatus.PENDING, // Set your desired default value here
+    defaultValue: BookingStatus.PENDING,
   })
   bookingStatus: BookingStatus;
 
   @Column({
     type: DataType.ENUM(...Object.values(PaymentMethod)),
-    allowNull: false,
     defaultValue: PaymentMethod.CARD,
   })
   paymentMethod: PaymentMethod;
@@ -95,10 +93,9 @@ export class Booking extends Model<Booking> {
   payments: Payment[];
 
   @ForeignKey(() => Transaction)
-  @Column(DataType.UUID)
+  @Column({ type: DataType.UUID, allowNull: true })
   transactionId: string;
 
   @BelongsTo(() => Transaction)
   transaction: Transaction;
 }
-
