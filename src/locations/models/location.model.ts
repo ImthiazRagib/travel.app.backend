@@ -1,71 +1,70 @@
 import {
-    Table,
-    Model,
-    PrimaryKey,
-    Default,
-    Column,
-    DataType,
-    ForeignKey,
-    BelongsTo,
-    HasMany,
+  Table,
+  Model,
+  Column,
+  DataType,
+  PrimaryKey,
+  Default,
+  ForeignKey,
+  BelongsTo,
+  HasMany,
 } from 'sequelize-typescript';
 import { LocationType } from '../enums/location.enums';
 
+// export const ISO_COUNTRIES = [
+//   'NL', 'NO', 'PK', 'PL', 'PS', 'PT', 'QA', 'RO', 'RS', 'SA',
+//   'SC', 'SE', 'SI', 'SK', 'SM', 'SV', 'TL', 'TN', 'TR', 'UA', 'VA', 'VG', 'XK'
+// ];
+
 @Table({
-    tableName: 'locations',
-    paranoid: true,
-    timestamps: true,
-    underscored: true,
+  tableName: 'locations',
+  paranoid: true,
+  timestamps: true,
+  underscored: true,
 })
 export class Location extends Model<Location> {
-    @PrimaryKey
-    @Default(DataType.UUIDV4)
-    @Column(DataType.UUID)
-    declare id: string;
+  @PrimaryKey
+  @Default(DataType.UUIDV4)
+  @Column(DataType.UUID)
+  declare id: string;
 
-    /** For nested locations (Country → City → Area) */
-    @ForeignKey(() => Location)
-    @Column(DataType.UUID)
-    parentId: string;
+  @ForeignKey(() => Location)
+  @Column({ type: DataType.UUID })
+  parentId: string;
 
-    @BelongsTo(() => Location, { foreignKey: 'parentId' })
-    parent: Location;
+  @BelongsTo(() => Location, { foreignKey: 'parentId' })
+  parent: Location;
 
-    /** Name of the location (Dubai, UAE, New York, etc.) */
-    @Column(DataType.STRING)
-    name: string;
+  @Column({ type: DataType.STRING, allowNull: false })
+  name: string;
 
-    /** Slug for URLs */
-    @Column({ type: DataType.STRING, unique: true })
-    slug: string;
+  @Column({ type: DataType.STRING, unique: true, allowNull: false })
+  slug: string;
 
-    /** Type of location */
-    @Column(DataType.ENUM(...Object.values(LocationType)))
-    type: LocationType;
+  @Column({
+    type: DataType.ENUM(...Object.values(LocationType)),
+    defaultValue: LocationType.City,
+  })
+  type: LocationType;
 
-    /** ISO country codes for country-level items */
-    @Column(DataType.STRING)
-    isoCode: string; // e.g. AE, US, UK
+  @Column({ type: DataType.STRING })
+  isoCode: string;
 
-    /** Optional code for cities (IATA, etc.) */
-    @Column(DataType.STRING)
-    code: string; // e.g. DXB, AUH, NYC
+  @Column({ type: DataType.STRING })
+  code: string;
 
-    /** Coordinates */
-    @Column(DataType.DECIMAL(10, 8))
-    latitude: number;
+  @Column({ type: DataType.DECIMAL(10, 8) })
+  latitude: number;
 
-    @Column(DataType.DECIMAL(11, 8))
-    longitude: number;
+  @Column({ type: DataType.DECIMAL(11, 8) })
+  longitude: number;
 
-    /** Search optimization */
-    @Column(DataType.BOOLEAN)
-    isPopular: boolean; // featured locations
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isPopular: boolean;
 
-    /** Extra data (language, region info, etc.) */
-    @Column({ type: DataType.JSONB, defaultValue: ()=>({}) })
-    metadata: object;
+  @Column({ type: DataType.JSONB, defaultValue: () => ({}) })
+  metadata: object;
 
-    @HasMany(() => Location)
-    children: Location[];
+  @HasMany(() => Location)
+  children: Location[];
 }
