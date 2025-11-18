@@ -14,8 +14,9 @@ import { Hotel } from 'src/hotels/models/hotels.model';
 
 @Table({
   tableName: 'rooms',
-  timestamps: true,
   paranoid: true,
+  timestamps: true,
+  underscored: true,
 })
 export class Room extends Model<Room> {
   @PrimaryKey
@@ -23,17 +24,8 @@ export class Room extends Model<Room> {
   @Column(DataType.UUID)
   declare id: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  name: string; // e.g., Deluxe Room, Suite
-
-  @Column({ type: DataType.INTEGER, allowNull: false })
-  capacity: number;
-
-  @Column({ type: DataType.FLOAT, allowNull: false })
-  price: number;
-
-  @Column({ type: DataType.BOOLEAN, defaultValue: true })
-  isAvailable: boolean;
+  @Column({ type: DataType.STRING, unique: true })
+  slug: string;
 
   @ForeignKey(() => Hotel)
   @Column(DataType.UUID)
@@ -42,6 +34,37 @@ export class Room extends Model<Room> {
   @BelongsTo(() => Hotel)
   hotel: Hotel;
 
+  @Column(DataType.STRING)
+  roomType: string; // Standard, Deluxe, Suite
+
+  @Column(DataType.STRING)
+  bedType: string; // King, Twin, etc.
+
+  @Column(DataType.INTEGER)
+  capacity: number;
+
+  @Column(DataType.DECIMAL)
+  pricePerNight: number;
+
+  @Column(DataType.JSONB)
+  amenities: object;
+
+  @Column(DataType.INTEGER)
+  totalRooms: number;
+
+  @Column(DataType.INTEGER)
+  remainingRooms: number;
+
+  @Column(DataType.BOOLEAN)
+  isAvailable: boolean;
+
+  @Column(DataType.STRING)
+  roomSize: string;
+
+  @Column(DataType.JSONB)
+  gallery: string[];
+
   @HasMany(() => Booking)
   bookings: Booking[];
 }
+

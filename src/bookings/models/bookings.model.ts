@@ -13,25 +13,15 @@ import { Hotel } from 'src/hotels/models/hotels.model';
 import { Payment } from 'src/payments/models/payments.model';
 import { Room } from 'src/rooms/models/rooms.model';
 import { User } from 'src/users/models/users.model';
-
-export enum BookingCategory {
-  HOTEL = 'hotel',
-  ROOM = 'room',
-  TOUR = 'tour',
-  FLIGHT = 'flight',
-}
-
-export enum BookingStatus {
-  PENDING = 'pending',
-  CONFIRMED = 'confirmed',
-  CANCELLED = 'cancelled',
-  COMPLETED = 'completed',
-}
+import { BookingCategory, BookingStatus } from '../enums/bookings.enum';
+import { PaymentMethod, PaymentStatus } from 'src/payments/enums/payment.enum';
+import { Transaction } from 'src/transactions/model/transactions.model';
 
 @Table({
   tableName: 'bookings',
-  timestamps: true,
   paranoid: true,
+  timestamps: true,
+  underscored: true,
 })
 export class Booking extends Model<Booking> {
   @PrimaryKey
@@ -41,43 +31,71 @@ export class Booking extends Model<Booking> {
 
   @ForeignKey(() => User)
   @Column({ type: DataType.UUID, allowNull: false })
-  userId: string;
+  customerId: string;
+
+  @BelongsTo(() => User)
+  customer: User;
 
   @ForeignKey(() => Hotel)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   hotelId: string;
 
+  @BelongsTo(() => Hotel)
+  hotel: Hotel;
+
   @ForeignKey(() => Room)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID, allowNull: false })
   roomId: string;
+
+  @BelongsTo(() => Room)
+  room: Room;
+
+  @Column({ type: DataType.DATEONLY, allowNull: false })
+  checkIn: string;
+
+  @Column({ type: DataType.DATEONLY, allowNull: false })
+  checkOut: string;
+
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  totalNights: number;
+
+  @Column({ type: DataType.DECIMAL, allowNull: false })
+  totalAmount: number;
+
+  @Column({ type: DataType.INTEGER, allowNull: false })
+  guests: number;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(PaymentStatus)),
+    defaultValue: PaymentStatus.PENDING,
+  })
+  paymentStatus: PaymentStatus;
 
   @Column({
     type: DataType.ENUM(...Object.values(BookingCategory)),
-    allowNull: false,
+    defaultValue: BookingCategory.ROOM,
   })
-  category: BookingCategory;
+  bookingCategory: BookingCategory;
 
   @Column({
     type: DataType.ENUM(...Object.values(BookingStatus)),
     defaultValue: BookingStatus.PENDING,
   })
-  status: BookingStatus;
+  bookingStatus: BookingStatus;
 
-  @Column({ type: DataType.DATE, allowNull: false })
-  checkIn: Date;
+  @Column({
+    type: DataType.ENUM(...Object.values(PaymentMethod)),
+    defaultValue: PaymentMethod.CARD,
+  })
+  paymentMethod: PaymentMethod;
 
-  @Column({ type: DataType.DATE, allowNull: false })
-  checkOut: Date;
-
-  @BelongsTo(() => User)
-  user: User;
-
-  @BelongsTo(() => Hotel)
-  hotel: Hotel;
-
-  @BelongsTo(() => Room)
-  room: Room;
-
-  @HasMany(() => Payment)
+  @HasMany(() => Payment, 'bookingId')
   payments: Payment[];
+
+  @ForeignKey(() => Transaction)
+  @Column({ type: DataType.UUID, allowNull: true })
+  transactionId: string;
+
+  @BelongsTo(() => Transaction)
+  transaction: Transaction;
 }

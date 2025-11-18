@@ -6,14 +6,19 @@ import {
   PrimaryKey,
   Default,
   HasMany,
+  ForeignKey,
+  BelongsTo,
 } from 'sequelize-typescript';
-import { Booking } from 'src/bookings/models/bookings.model';
 import { Room } from 'src/rooms/models/rooms.model';
+import { User } from 'src/users/models/users.model';
+import { HotelStatus } from '../enums/hotel.enums';
+import { Location } from 'src/locations/models/location.model';
 
 @Table({
   tableName: 'hotels',
-  timestamps: true,
   paranoid: true,
+  timestamps: true,
+  underscored: true,
 })
 export class Hotel extends Model<Hotel> {
   @PrimaryKey
@@ -21,21 +26,84 @@ export class Hotel extends Model<Hotel> {
   @Column(DataType.UUID)
   declare id: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
+  @ForeignKey(() => User)
+  @Column(DataType.UUID)
+  ownerId: string;
+
+  @BelongsTo(() => User)
+  owner: User;
+
+  @Column({ type: DataType.STRING, unique: true })
   name: string;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  location: string;
+  @Column({ type: DataType.STRING, unique: true })
+  slug: string;
 
-  @Column({ type: DataType.STRING, allowNull: true })
+  @Column(DataType.TEXT)
   description: string;
 
-  @Column({ type: DataType.FLOAT, allowNull: true })
+  @Column(DataType.TEXT)
+  shortDescription: string;
+
+  @Column(DataType.STRING)
+  country: string;
+
+  @Column(DataType.STRING)
+  city: string;
+
+  @Column(DataType.STRING)
+  address: string;
+
+  @ForeignKey(() => Location)
+  @Column({ type: DataType.UUID })
+  locationId: string;
+
+  @BelongsTo(() => Location)
+  location: Location;
+
+  @Column(DataType.JSONB)
+  amenities: object;
+
+  @Column(DataType.TEXT)
+  policies: string;
+
+  @Column(DataType.TEXT)
+  rules: string;
+
+  @Column(DataType.INTEGER)
+  stars: number;
+
+  @Column(DataType.DECIMAL(3, 1))
   rating: number;
+
+  @Column(DataType.INTEGER)
+  reviewCount: number;
+
+  @Column(DataType.DECIMAL)
+  basePrice: number;
+
+  @Column(DataType.STRING)
+  currency: string;
+
+  @Column(DataType.STRING)
+  thumbnail: string;
+
+  @Column(DataType.JSONB)
+  gallery: string[];
+
+  @Column({
+    type: DataType.ENUM(...Object.values(HotelStatus)),
+    defaultValue: HotelStatus.Pending,
+  })
+  status: HotelStatus;
+
+  @Column({ type: DataType.BOOLEAN, defaultValue: false })
+  isFeatured: boolean;
+
+  @Column({ type: DataType.BOOLEAN, defaultValue: true })
+  isActive: boolean;
 
   @HasMany(() => Room)
   rooms: Room[];
-
-  @HasMany(() => Booking)
-  bookings: Booking[];
 }
+
