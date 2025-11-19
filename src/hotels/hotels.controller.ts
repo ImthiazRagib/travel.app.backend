@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Req, Get } from '@nestjs/common';
 import { HotelsService } from './hotels.service';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -16,5 +16,10 @@ export class HotelsController {
   async create(@Body() dto: CreateHotelDto, @Req() req: any) {
     const ownerId = req.user.id; // From JWT auth
     return this.hotelsService.createHotel(dto, ownerId);
+  }
+
+  @Get()
+  async findAll() {
+    return this.hotelsService.findAll();
   }
 }

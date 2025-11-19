@@ -4,6 +4,7 @@ import { Hotel } from './models/hotels.model';
 import { Location } from 'src/locations/models/location.model';
 import { CreateHotelDto } from './dto/create-hotel.dto';
 import { Sequelize } from 'sequelize';
+import { User } from 'src/users/models/users.model';
 
 @Injectable()
 export class HotelsService {
@@ -63,6 +64,16 @@ export class HotelsService {
             );
 
             return hotel;
+        });
+    }
+
+    async findAll() {
+        return await this.hotelModel.findAll({
+            include: ['location', 'rooms', {
+                model: User,
+                as: 'owner',
+                attributes: ['id', 'email', 'firstName', 'lastName', 'phone'],
+            }]
         });
     }
 }

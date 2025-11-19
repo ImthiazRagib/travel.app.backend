@@ -13,6 +13,7 @@ import { Hotel } from 'src/hotels/models/hotels.model';
     HotelsModule,
   ],
   controllers: [RoomsController],
-  providers: [RoomsService]
+  providers: [RoomsService],
+  exports: [RoomsService],
 })
 export class RoomsModule {}
