@@ -33,7 +33,7 @@ export enum ProviderEnum {
     IATA = 'iata',
 
     // Fallback
-    UNKNOWN = 'unknown',
+    // UNKNOWN = 'unknown',
 }
 
 export enum PaymentStatus {
