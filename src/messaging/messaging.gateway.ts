@@ -17,7 +17,7 @@ import { MessagingService } from './messaging.service';
 import { ConfigService } from '@nestjs/config';
 import { SendMessageDto } from './dtos/send-message.dto';
 import { MessageDirection } from './models/message.model';
-import { decryptData } from 'src/utils/encryption/secureCodec';
+import { decryptData, encryptData } from 'src/utils/encryption/secureCodec';
 import { fixJsonString } from 'src/utils/fixJsonStr';
 
 
@@ -103,9 +103,7 @@ export class MessagingGateway
     @SubscribeMessage('private_message')
     async onPrivateMessage(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
         const decryptedData = decryptData(data);
-        console.log("🚀 ~ MessagingGateway ~ onPrivateMessage ~ decryptedData:", decryptedData)
         const payload = JSON.parse(fixJsonString(decryptedData)) as SendMessageDto;
-        console.log("🚀 ~ MessagingGateway ~ onPrivateMessage ~ payload:", payload)
         const user = (client as any).user;
         if (!user) throw new UnauthorizedException();
 
@@ -139,7 +137,7 @@ export class MessagingGateway
         // Ack to sender
         client.emit('message_sent', emitPayload);
 
-        return { ok: true, message: emitPayload };
+        return { ok: true, message: encryptData(JSON.stringify(emitPayload)) };
     }
 
     /**
