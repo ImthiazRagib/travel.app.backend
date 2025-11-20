@@ -17,6 +17,10 @@ import { Location } from './locations/models/location.model';
 import { Payment } from './payments/models/payments.model';
 import { Transaction } from './transactions/model/transactions.model';
 import { LocationsModule } from './locations/locations.module';
+import { MessagingModule } from './messaging/messaging.module';
+import { Message } from './messaging/models/message.model';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -39,6 +43,7 @@ import { LocationsModule } from './locations/locations.module';
           Location,
           Payment,
           Transaction,
+          Message
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -53,7 +58,9 @@ import { LocationsModule } from './locations/locations.module';
     PaymentsModule,
     TransactionsModule,
     LocationsModule,
+    MessagingModule,
   ],
-  providers: [PaymentsService],
+  controllers: [AppController],
+  providers: [AppService, PaymentsService],
 })
 export class AppModule {}
