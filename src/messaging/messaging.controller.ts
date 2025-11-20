@@ -28,14 +28,15 @@ export class MessagingController {
 
     @Get('conversation/:participantId')
     async conversation(@Req() req: any, @Param() params: GetConversationDto) {
-        // req.user.userId must be set by JwtAuthGuard
-        const userId = req.user?.userId;
+        console.log("🚀 ~ MessagingController ~ conversation ~ params:", params)
+        // req.user.id must be set by JwtAuthGuard
+        const userId = req.user?.id;
 
         const page = Number((params as any).page) || 1;
         const pageSize = Number((params as any).pageSize) || 50;
         const participantId = (params as any).participantId;
         // admin user id should come from req.user; for simplicity we assume admin id provided or fetched
-        // In real code: const adminId = req.user.userId;
+        // In real code: const adminId = req.user.id;
         return this.messagingService.getConversation(userId, participantId, page, pageSize);
     }
 
