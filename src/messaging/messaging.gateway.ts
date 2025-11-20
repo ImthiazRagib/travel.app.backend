@@ -17,6 +17,8 @@ import { MessagingService } from './messaging.service';
 import { ConfigService } from '@nestjs/config';
 import { SendMessageDto } from './dtos/send-message.dto';
 import { MessageDirection } from './models/message.model';
+import { decryptData } from 'src/utils/encryption/secureCodec';
+import { fixJsonString } from 'src/utils/fixJsonStr';
 
 
 @WebSocketGateway({
@@ -99,7 +101,11 @@ export class MessagingGateway
      * Gateway saves message and emits to recipient room and sender room for ACK.
      */
     @SubscribeMessage('private_message')
-    async onPrivateMessage(@MessageBody() payload: SendMessageDto, @ConnectedSocket() client: Socket) {
+    async onPrivateMessage(@MessageBody() data: string, @ConnectedSocket() client: Socket) {
+        const decryptedData = decryptData(data);
+        console.log("🚀 ~ MessagingGateway ~ onPrivateMessage ~ decryptedData:", decryptedData)
+        const payload = JSON.parse(fixJsonString(decryptedData)) as SendMessageDto;
+        console.log("🚀 ~ MessagingGateway ~ onPrivateMessage ~ payload:", payload)
         const user = (client as any).user;
         if (!user) throw new UnauthorizedException();
 

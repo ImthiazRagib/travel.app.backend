@@ -68,7 +68,7 @@ export function encryptData(plaintext: string): string {
   return toBase62(iv) + "." + toBase62(encrypted);
 }
 
-export function decryptData(encoded: string): string {
+export function decryptData(encoded: string): any {
 
   if (!isValidEncodedData(encoded)) throw new HttpException("Invalid encoded data", HttpStatus.BAD_REQUEST);
 
