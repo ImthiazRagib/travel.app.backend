@@ -1,39 +1,43 @@
+import { HttpException } from "@nestjs/common";
+import { HttpStatus } from "@nestjs/common";
 import crypto from "crypto";
 
-// const SECRET = "SECRET_KEY";
+const SECRET = "SECRET_KEY";
 const ALGO = "aes-256-cbc";
 
-// // Always derive a full 32-byte key from the secret
-// function getKey(secret) {
-//   return crypto.createHash("sha256").update(secret).digest();
-// }
+// Always derive a full 32-byte key from the secret
+function getKey(secret: string) {
+  return crypto.createHash("sha256").update(secret).digest();
+}
 
-// export function encrypt(text) {
-//   const iv = crypto.randomBytes(16);
-//   const key = getKey(SECRET);
+export function isValidEncodedData(token: string, expected?: string): boolean {
+  try {
+    // Must include the dot separator
+    if (!token.includes(".")) return false;
 
-//   const cipher = crypto.createCipheriv(ALGO, key, iv);
-//   let encrypted = cipher.update(text, "utf8", "base64");
-//   encrypted += cipher.final("base64");
+    const [ivStr, encryptedStr] = token.split(".");
+    if (!ivStr || !encryptedStr) return false;
 
-//   // Return iv + encrypted text together
-//   return iv.toString("base64") + ":" + encrypted;
-// }
+    // Base62 validation (only allowed characters)
+    const base62Regex = /^[0-9A-Za-z]+$/;
+    if (!base62Regex.test(ivStr) || !base62Regex.test(encryptedStr)) return false;
 
-// export function decrypt(enc) {
-//   const [ivStr, encrypted] = enc.split(":");
-//   const iv = Buffer.from(ivStr, "base64");
-//   const key = getKey(SECRET);
+    // // Try decoding
+    // const decoded = decrypt(token);
 
-//   const decipher = crypto.createDecipheriv(ALGO, key, iv);
-//   let decrypted = decipher.update(encrypted, "base64", "utf8");
-//   decrypted += decipher.final("utf8");
-//   return decrypted;
-// }
+    // // Optional match check
+    // if (expected !== undefined && decoded !== expected) {
+    //   return false;
+    // }
 
-const SECRET_KEY = crypto.createHash("sha256")
-  .update("SECRET_KEY")
-  .digest(); // 32 bytes
+    return true; // Valid encrypted data
+  } catch (err) {
+    return false; // Any failure = invalid
+  }
+}
+
+
+const SECRET_KEY = getKey(SECRET); // 32 bytes
 
 const IV_LENGTH = 16;
 const BASE62_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
@@ -57,14 +61,17 @@ function fromBase62(str: string) {
   return Buffer.from(value.toString(16), "hex");
 }
 
-export function encrypt(plaintext: string): string {
+export function encryptData(plaintext: string): string {
   const iv = crypto.randomBytes(IV_LENGTH);
   const cipher = crypto.createCipheriv(ALGO, SECRET_KEY, iv);
   const encrypted = Buffer.concat([cipher.update(plaintext), cipher.final()]);
   return toBase62(iv) + "." + toBase62(encrypted);
 }
 
-export function decrypt(encoded: string): string {
+export function decryptData(encoded: string): string {
+
+  if (!isValidEncodedData(encoded)) throw new HttpException("Invalid encoded data", HttpStatus.BAD_REQUEST);
+
   const [ivStr, encryptedStr] = encoded.split(".");
   const iv = fromBase62(ivStr);
   const encrypted = fromBase62(encryptedStr);
