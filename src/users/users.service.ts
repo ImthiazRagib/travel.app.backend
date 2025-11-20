@@ -31,7 +31,11 @@ export class UsersService {
     }
 
     async findById(id: string) {
-        const user = await this.userModel.findByPk(id);
+        const user = await this.userModel.findByPk(id, {
+            attributes: {
+                exclude: ['password'],
+            }
+        });
         return user?.get({ plain: true });
     }
 }

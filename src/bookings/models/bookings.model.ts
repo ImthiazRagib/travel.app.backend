@@ -14,7 +14,7 @@ import { Payment } from 'src/payments/models/payments.model';
 import { Room } from 'src/rooms/models/rooms.model';
 import { User } from 'src/users/models/users.model';
 import { BookingCategory, BookingStatus } from '../enums/bookings.enum';
-import { PaymentMethod, PaymentStatus } from 'src/payments/enums/payment.enum';
+import { ProviderEnum , PaymentStatus } from 'src/payments/enums/payment.enum';
 import { Transaction } from 'src/transactions/model/transactions.model';
 
 @Table({
@@ -84,10 +84,10 @@ export class Booking extends Model<Booking> {
   bookingStatus: BookingStatus;
 
   @Column({
-    type: DataType.ENUM(...Object.values(PaymentMethod)),
-    defaultValue: PaymentMethod.CARD,
+    type: DataType.ENUM(...Object.values(ProviderEnum)),
+    allowNull: false,
   })
-  paymentMethod: PaymentMethod;
+  paymentMethod: ProviderEnum;
 
   @HasMany(() => Payment, 'bookingId')
   payments: Payment[];
