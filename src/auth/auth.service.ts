@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/users/models/users.model';
 import { RegisterDto } from './dto/register.dto';
 import { ConfigService } from '@nestjs/config/dist/config.service';
+import { encryptData, decryptData } from 'src/utils/encryption/secureCodec';
 @Injectable()
 export class AuthService {
   constructor(
@@ -17,7 +18,8 @@ export class AuthService {
     const user = await this.usersService.findByEmail(email);
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
-    const passwordValid = await bcrypt.compare(_password, user.password);
+    const decryptedPassword = decryptData(_password);
+    const passwordValid = await bcrypt.compare(decryptedPassword, user.password);
     if (!passwordValid) throw new UnauthorizedException('Invalid credentials');
 
     const { password, isActive, ...rest } = user; // remove password before returning

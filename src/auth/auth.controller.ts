@@ -5,10 +5,21 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CurrentUser } from 'src/decorator/current-user.decorator';
+import { decryptData, encryptData } from 'src/utils/encryption/secureCodec';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) { }
+
+  @Post('encrypt')
+  encryptData(@Body('data') data: string) {
+    return { encrypted: encryptData(data) };
+  }
+
+  @Post('decrypt')
+  decryptData(@Body('data') data: string) {
+    return { decrypted: decryptData(data) };
+  }
 
   @Post('register')
   async register(@Body() data: RegisterDto) {
