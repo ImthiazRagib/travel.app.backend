@@ -1,6 +1,7 @@
 export enum EnumRoles {
     SUPERADMIN = 'superadmin',
     ADMIN = 'admin',
+    AIRLINECO = 'airlineco',
 
     VENDOR = 'vendor', // owner of a vendor account, hotel, restaurant etc.
     STAFF = 'staff', // employee of a vendor account
