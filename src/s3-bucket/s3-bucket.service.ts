@@ -33,6 +33,7 @@ export class AwsS3Service {
     file: Multer.File,
     dirName?: string,
   ): Promise<{ fileUrl: string, fileName: string }> {
+    console.log("🚀 ~ AwsS3Service ~ uploadFile ~ file:", file)
     try {
       const key = `${Date.now()}-${file.originalname.replace(/\s+/g, '-').toLowerCase()}`;
       const directory = dirName || 'travel';

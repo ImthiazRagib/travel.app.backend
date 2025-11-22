@@ -21,6 +21,10 @@ import { MessagingModule } from './messaging/messaging.module';
 import { Message } from './messaging/models/message.model';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
+import { AirlinesModule } from './airlines/airlines.module';
+import { FlightsModule } from './flights/flights.module';
+import { Airlines } from './airlines/models/airlines.model';
+import { Flights } from './flights/models/flights.model';
 
 @Module({
   imports: [
@@ -43,7 +47,9 @@ import { AppController } from './app.controller';
           Location,
           Payment,
           Transaction,
-          Message
+          Message,
+          Airlines,
+          Flights,
         ],
         autoLoadModels: true,
         synchronize: true,
@@ -59,6 +65,8 @@ import { AppController } from './app.controller';
     TransactionsModule,
     LocationsModule,
     MessagingModule,
+    AirlinesModule,
+    FlightsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PaymentsService],
