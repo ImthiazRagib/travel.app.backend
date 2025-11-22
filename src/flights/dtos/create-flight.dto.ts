@@ -1,10 +1,10 @@
-import { IsString, IsUUID, IsEnum, IsInt, IsOptional, Min } from 'class-validator';
+import { IsString, IsUUID, IsEnum, IsInt, IsOptional, Min, IsNotEmpty } from 'class-validator';
 import { FlightStops } from '../enums/flights.enum';
 
 export class CreateFlightDto {
   @IsUUID()
-  @IsOptional() // Optional if assigned via airline relation
-  airlineId?: string;
+  @IsNotEmpty() // Optional if assigned via airline relation
+  airlineId: string;
 
   @IsString()
   flightNumber: string; // e.g., EK202

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AirlinesService } from './airlines.service';
 import { CreateAirlineDto } from './dtos/create-airlines.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -7,6 +7,7 @@ import { Roles } from 'src/common/decorator/roles.decorator';
 import { EnumRoles } from 'src/users/enums/roles.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Multer } from 'multer';
+import { AirlinesQueryDto } from './dtos/airlines-query.dto';
 
 
 
@@ -33,8 +34,8 @@ export class AirlinesController {
     }
 
     @Get()
-    getAirlines(@Request() req: any) {
+    getAirlines(@Request() req: any, @Query() query: AirlinesQueryDto) {
         const userId = req.user.id;
-        return this.airlinesService.getAirlines(userId);
+        return this.airlinesService.getAirlines(query, userId);
     }
 }
