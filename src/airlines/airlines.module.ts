@@ -11,6 +11,7 @@ import { AwsS3Module } from 'src/s3-bucket/s3-bucket.module';
     AwsS3Module,
   ],
   controllers: [AirlinesController],
-  providers: [AirlinesService]
+  providers: [AirlinesService],
+  exports: [AirlinesService],
 })
 export class AirlinesModule {}
