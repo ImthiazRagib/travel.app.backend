@@ -56,10 +56,10 @@ export class AirlinesService {
   }
 
   async getAirlines(query: AirlinesQueryDto, userId: string) {
-    const { limit = 10, sortBy = SortBy.CREATED_AT, sortOrder = SortOrder.ASC, query: q } = query;
+    const { page = 1,limit = 10, sortBy = SortBy.CREATED_AT, sortOrder = SortOrder.ASC } = query;
     const { where, offset } = this.createQuery(query);
 
-    return await this.airlineModel.findAll({
+    const { rows: airlines, count: total } = await this.airlineModel.findAndCountAll({
       where: {
         ...where,
         userId,
@@ -72,6 +72,13 @@ export class AirlinesService {
         'flights',
       ]
     });
+
+    return {
+      airlines,
+      total,
+      currentPage: page,
+      limit,
+    }
   }
 
   async checkAirlineIsVerified(airlineId: string, userId?: string) {
@@ -85,11 +92,13 @@ export class AirlinesService {
       where['id'] = airlineId;
     }
 
-    return await this.airlineModel.findOne({
+    const airline = await this.airlineModel.findOne({
       where: {
         ...where,
         isVerified: true
       }
     });
+
+    return airline?.get({ plain: true });
   }
 }
