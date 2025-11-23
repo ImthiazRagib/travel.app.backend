@@ -77,6 +77,7 @@ export class AirlinesService {
       airlines,
       total,
       currentPage: page,
+      totalPages: Math.ceil(total / limit),
       limit,
     }
   }

@@ -119,6 +119,7 @@ export class FlightsService {
       flights,
       total,
       currentPage: page,
+      totalPages: Math.ceil(total / limit),
       limit,
     }
   }
