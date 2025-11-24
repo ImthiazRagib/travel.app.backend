@@ -8,20 +8,24 @@ import { Sequelize } from 'sequelize-typescript';
 import { BookRoomDto } from './dto/book-room.dto';
 import { BookingCategory, BookingStatus } from './enums/bookings.enum';
 import { PaymentStatus, ProviderEnum } from 'src/payments/enums/payment.enum';
-import { TransactionDirection, TransactionStatus } from 'src/transactions/enums/transactions.enum';
+import { CurrencyTypes, TransactionDirection, TransactionStatus } from 'src/transactions/enums/transactions.enum';
 import { Hotel } from 'src/hotels/models/hotels.model';
+import { Flights } from 'src/flights/models/flights.model';
+import { BookFlightDto } from './dto/book-flight.dto';
 
 @Injectable()
 export class BookingsService {
     constructor(
         @InjectModel(Booking) private bookingModel: typeof Booking,
         @InjectModel(Room) private roomModel: typeof Room,
+        @InjectModel(Hotel) private hotelModel: typeof Hotel,
+        @InjectModel(Flights) private flightModel: typeof Flights,
         @InjectModel(Payment) private paymentModel: typeof Payment,
         @InjectModel(Transaction) private transactionModel: typeof Transaction,
         @InjectConnection() private readonly sequelize: Sequelize
     ) { }
 
-    async bookRoom(dto: BookRoomDto) {
+    async bookRoom(dto: BookRoomDto, userId: string) {
         // return dto
         try {
             return this.sequelize.transaction(async (t) => {
@@ -42,7 +46,7 @@ export class BookingsService {
 
                 // 3️⃣ Create Booking
                 const booking = await this.bookingModel.create({
-                    customerId: dto.customerId,
+                    customerId: userId,
                     hotelId: dto.hotelId,
                     roomId: dto.roomId,
                     checkIn: dto.checkIn,
@@ -67,7 +71,7 @@ export class BookingsService {
 
                 // 5️⃣ Create Transaction
                 const transaction = await this.transactionModel.create({
-                    userId: dto.customerId,
+                    userId: userId,
                     bookingId: booking.id,
                     paymentId: payment.id,
                     type: 'booking', //! create a type
@@ -83,7 +87,7 @@ export class BookingsService {
                 await room.update({ remainingRooms: vRoom.remainingRooms - 1 }, { transaction: t });
 
                 // 6️⃣ Update Room availability
-                await room.update({ remainingRooms: vRoom.remainingRooms - 1 }, { transaction: t });
+                // await room.update({ remainingRooms: vRoom.remainingRooms - 1 }, { transaction: t });
 
                 // 7️⃣ Update booking with transaction id
                 await booking.update({ transactionId: transaction.id }, { transaction: t });
@@ -98,6 +102,65 @@ export class BookingsService {
                 error.message || 'Internal server error',
                 error.status || HttpStatus.INTERNAL_SERVER_ERROR
             );
+        }
+    }
+
+    async bookFlight(dto: BookFlightDto, userId: string) {
+        try {
+            return this.sequelize.transaction(async (t) => {
+                // check the flight availability
+                const flight = await this.flightModel.findByPk(dto.flightId, { transaction: t });
+                if (!flight) throw new NotFoundException('Flight not found');
+                const vFlight = flight.get({ plain: true });
+                if (vFlight.availableSeats < 1) throw new BadRequestException('No seats available');
+
+                // update the flight available seats
+                await flight.update({ availableSeats: vFlight.availableSeats - 1 }, { transaction: t });
+
+                //* create the booking
+                const booking = await this.bookingModel.create({
+                    airlineId: dto.airlineId,
+                    customerId: userId,
+                    flightId: vFlight.id,
+                    totalAmount: dto.totalAmount,
+                    bookingCategory: BookingCategory.FLIGHT,
+                    paymentMethod: dto.paymentMethod
+                } as unknown as Booking, { transaction: t });
+
+                // * Create Payment
+                const payment = await this.paymentModel.create({
+                    bookingId: booking.id,
+                    cardNumber: dto.cardNumber,
+                    amount: dto.totalAmount,
+                    direction: TransactionDirection.Credit,
+                    status: PaymentStatus.PENDING,
+                    provider: dto.paymentMethod,
+                } as Payment, { transaction: t });
+
+                // * Create Transaction
+                const transaction = await this.transactionModel.create({
+                    userId: userId,
+                    bookingId: booking.id,
+                    paymentId: payment.id,
+                    type: TransactionDirection.Credit,
+                    direction: TransactionDirection.Credit,
+                    amount: dto.totalAmount,
+                    currency: dto.currency, //! create a type
+                    status: TransactionStatus.Pending,
+                    txnId: `TXN-${Date.now()}`,
+                    notes: dto.notes
+                } as Transaction, { transaction: t });
+
+                // 7️⃣ Update booking with transaction id
+                await booking.update({ transactionId: transaction.id }, { transaction: t });
+
+                return {
+                    message: `An email with invoice has been sent to you.`
+                }
+
+            })
+        } catch (error) {
+
         }
     }
 

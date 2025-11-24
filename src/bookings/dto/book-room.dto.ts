@@ -2,10 +2,6 @@ import { IsUUID, IsDateString, IsInt, Min, IsEnum, IsOptional, IsString, IsNumbe
 import { ProviderEnum } from 'src/payments/enums/payment.enum';
 
 export class BookRoomDto {
-    @IsOptional()
-    @IsUUID()
-    customerId: string;
-
     @IsUUID()
     hotelId: string;
 
