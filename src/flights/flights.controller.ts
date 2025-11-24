@@ -5,7 +5,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorator/roles.decorator';
 import { EnumRoles } from 'src/users/enums/roles.enum';
-import { AirlinesQueryDto } from 'src/airlines/dtos/airlines-query.dto';
+import { FlightsQueryDto } from './dtos/flights-query.dto';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('flights')
@@ -19,7 +19,7 @@ export class FlightsController {
   }
 
   @Get()
-  getFlights(@Query() query: AirlinesQueryDto) {
+  getFlights(@Query() query: FlightsQueryDto) {
     return this.flightService.getFlights(query);
   }
 }
