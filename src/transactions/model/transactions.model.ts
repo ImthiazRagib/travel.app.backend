@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { Booking } from 'src/bookings/models/bookings.model';
 import { User } from 'src/users/models/users.model';
-import { TransactionDirection, TransactionStatus } from '../enums/transactions.enum';
+import { TransactionDirection, TransactionStatus, TransactionsType } from '../enums/transactions.enum';
 import { Payment } from 'src/payments/models/payments.model';
 
 @Table({
@@ -37,7 +37,7 @@ export class Transaction extends Model<Transaction> {
   bookingId: string;
 
   @BelongsTo(() => Booking)
-  booking: Booking;
+  booking: Booking; 
 
   @ForeignKey(() => Payment)
   @Column({ type: DataType.UUID, allowNull: true })
@@ -46,8 +46,8 @@ export class Transaction extends Model<Transaction> {
   @BelongsTo(() => Payment)
   payment: Payment;
 
-  @Column({ type: DataType.STRING, allowNull: false })
-  type: string;
+  @Column({ type: DataType.ENUM(...Object.values(TransactionsType)), allowNull: false })
+  type: TransactionsType;
 
   @Column({
     type: DataType.ENUM(...Object.values(TransactionDirection))
