@@ -20,5 +20,8 @@ export interface RoomAmenity {
   breakfastIncluded?: boolean;
   parking?: boolean;
   poolAccess?: boolean;
+  airCondition?: boolean;
+  minibar?: boolean;
+  seaView?: boolean;
   [key: string]: any;
 }

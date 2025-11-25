@@ -11,6 +11,7 @@ import {
 } from 'sequelize-typescript';
 import { Booking } from 'src/bookings/models/bookings.model';
 import { Hotel } from 'src/hotels/models/hotels.model';
+import { BedType, RoomType } from '../enums/rooms.enum';
 
 @Table({
   tableName: 'rooms',
@@ -34,11 +35,11 @@ export class Room extends Model<Room> {
   @BelongsTo(() => Hotel)
   hotel: Hotel;
 
-  @Column(DataType.STRING)
-  roomType: string; // Standard, Deluxe, Suite
+  @Column(DataType.ENUM(...Object.values(RoomType)))
+  roomType: RoomType; // Standard, Deluxe, Suite
 
-  @Column(DataType.STRING)
-  bedType: string; // King, Twin, etc.
+  @Column(DataType.ENUM(...Object.values(BedType)))
+  bedType: RoomType; // King, Twin, etc.
 
   @Column(DataType.INTEGER)
   capacity: number;

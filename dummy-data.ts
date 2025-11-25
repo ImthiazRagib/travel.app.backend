@@ -64,3 +64,104 @@ const flights = [
     "availableSeats": 390 // Optional: you may leave calculated later
   }
 ]
+
+const rooms = [
+  {
+    "slug": "deluxe-king-sea-view",
+    "hotelId": "ab52bfe6-17e2-46fb-ad40-0245f21f6c43",
+    "roomType": "Deluxe",
+    "bedType": "King",
+    "capacity": 3,
+    "pricePerNight": 450.75,
+    "amenities": {
+      "wifi": true,
+      "airCondition": true,
+      "tv": true,
+      "minibar": true,
+      "balcony": true,
+      "seaView": true,
+      "breakfastIncluded": true
+    },
+    "totalRooms": 10,
+    "remainingRooms": 10,
+    "isAvailable": true,
+    "roomSize": "45 sqm",
+    "gallery": [
+      "https://example.com/rooms/deluxe-king-sea1.jpg",
+      "https://example.com/rooms/deluxe-king-sea2.jpg"
+    ]
+  },
+  {
+    "slug": "standard-twin-city-view",
+    "hotelId": "ab52bfe6-17e2-46fb-ad40-0245f21f6c43",
+    "roomType": "Standard",
+    "bedType": "Twin",
+    "capacity": 2,
+    "pricePerNight": 180.5,
+    "amenities": {
+      "wifi": true,
+      "airCondition": true,
+      "tv": true,
+      "cityView": true,
+      "breakfastIncluded": false
+    },
+    "totalRooms": 20,
+    "remainingRooms": 20,
+    "isAvailable": true,
+    "roomSize": "25 sqm",
+    "gallery": [
+      "https://example.com/rooms/standard-city1.jpg",
+      "https://example.com/rooms/standard-city2.jpg"
+    ]
+  },
+  {
+    "slug": "executive-suite-premium",
+    "hotelId": "ab52bfe6-17e2-46fb-ad40-0245f21f6c43",
+    "roomType": "Suite",
+    "bedType": "King",
+    "capacity": 4,
+    "pricePerNight": 870.99,
+    "amenities": {
+      "wifi": true,
+      "airCondition": true,
+      "tv": true,
+      "jacuzzi": true,
+      "kitchen": true,
+      "livingRoom": true,
+      "oceanView": true,
+      "breakfastIncluded": true
+    },
+    "totalRooms": 5,
+    "remainingRooms": 5,
+    "isAvailable": true,
+    "roomSize": "90 sqm",
+    "gallery": [
+      "https://example.com/rooms/suite-premium1.jpg",
+      "https://example.com/rooms/suite-premium2.jpg"
+    ]
+  },
+  {
+    "slug": "family-room-quad",
+    "hotelId": "ab52bfe6-17e2-46fb-ad40-0245f21f6c43",
+    "roomType": "Family",
+    "bedType": "Queen + Twin",
+    "capacity": 4,
+    "pricePerNight": 350.00,
+    "amenities": {
+      "wifi": true,
+      "airCondition": true,
+      "tv": true,
+      "kidsPlayArea": true,
+      "breakfastIncluded": true
+    },
+    "totalRooms": 12,
+    "remainingRooms": 12,
+    "isAvailable": true,
+    "roomSize": "55 sqm",
+    "gallery": [
+      "https://example.com/rooms/family-quad1.jpg",
+      "https://example.com/rooms/family-quad2.jpg"
+    ]
+  }
+]
+
