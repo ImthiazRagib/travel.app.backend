@@ -1,11 +1,8 @@
-import { IsUUID, IsDateString, IsInt, Min, IsEnum, IsOptional, IsString, IsNumber } from 'class-validator';
+import { IsUUID, IsDateString, IsInt, Min, IsEnum, IsOptional, IsString, IsNumber, IsNotEmpty } from 'class-validator';
 import { ProviderEnum } from 'src/payments/enums/payment.enum';
+import { CurrencyTypes } from 'src/transactions/enums/transactions.enum';
 
 export class BookRoomDto {
-    @IsOptional()
-    @IsUUID()
-    customerId: string;
-
     @IsUUID()
     hotelId: string;
 
@@ -17,6 +14,10 @@ export class BookRoomDto {
 
     @IsDateString()
     checkOut: string;
+
+    @IsNotEmpty()
+    @IsEnum(CurrencyTypes)
+    currency: CurrencyTypes //* pass a symbol
 
     @IsInt()
     @Min(1)

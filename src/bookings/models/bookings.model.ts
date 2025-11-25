@@ -14,8 +14,9 @@ import { Payment } from 'src/payments/models/payments.model';
 import { Room } from 'src/rooms/models/rooms.model';
 import { User } from 'src/users/models/users.model';
 import { BookingCategory, BookingStatus } from '../enums/bookings.enum';
-import { ProviderEnum , PaymentStatus } from 'src/payments/enums/payment.enum';
+import { ProviderEnum, PaymentStatus } from 'src/payments/enums/payment.enum';
 import { Transaction } from 'src/transactions/model/transactions.model';
+import { Airlines } from 'src/airlines/models/airlines.model';
 
 @Table({
   tableName: 'bookings',
@@ -37,32 +38,32 @@ export class Booking extends Model<Booking> {
   customer: User;
 
   @ForeignKey(() => Hotel)
-  @Column({ type: DataType.UUID, allowNull: false })
-  hotelId: string;
+  @Column({ type: DataType.UUID})
+  hotelId?: string;
 
   @BelongsTo(() => Hotel)
-  hotel: Hotel;
+  hotel?: Hotel;
 
   @ForeignKey(() => Room)
-  @Column({ type: DataType.UUID, allowNull: false })
-  roomId: string;
+  @Column({ type: DataType.UUID })
+  roomId?: string;
 
   @BelongsTo(() => Room)
-  room: Room;
+  room?: Room;
 
-  @Column({ type: DataType.DATEONLY, allowNull: false })
+  @Column({ type: DataType.DATEONLY })
   checkIn: string;
 
-  @Column({ type: DataType.DATEONLY, allowNull: false })
+  @Column({ type: DataType.DATEONLY })
   checkOut: string;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER })
   totalNights: number;
 
-  @Column({ type: DataType.DECIMAL, allowNull: false })
+  @Column({ type: DataType.DECIMAL })
   totalAmount: number;
 
-  @Column({ type: DataType.INTEGER, allowNull: false })
+  @Column({ type: DataType.INTEGER })
   guests: number;
 
   @Column({
@@ -93,9 +94,18 @@ export class Booking extends Model<Booking> {
   payments: Payment[];
 
   @ForeignKey(() => Transaction)
-  @Column({ type: DataType.UUID, allowNull: true })
+  @Column({ type: DataType.UUID })
   transactionId: string;
 
   @BelongsTo(() => Transaction)
   transaction: Transaction;
+
+  @ForeignKey(() => Airlines)
+  @Column({ type: DataType.UUID })
+  airlineId: string;
+
+  @BelongsTo(() => Airlines)
+  airline: Airlines;
+
+  //! ADD FOOD TABLE AND QUERY LATER
 }

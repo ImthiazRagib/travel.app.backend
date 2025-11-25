@@ -1,4 +1,4 @@
-export enum TransactionType {
+export enum TransactionsType {
     Deposit = 'deposit',
     Withdrawal = 'withdrawal',
     Purchase = 'purchase',
@@ -16,4 +16,15 @@ export enum TransactionStatus {
 export enum TransactionDirection {
     Debit = 'debit',
     Credit = 'credit',
+}
+
+export enum CurrencyTypes {
+    USD = 'USD',
+    EUR = 'EUR',
+    GBP = 'GBP',
+    JPY = 'JPY',
+    CAD = 'CAD',
+    AUD = 'AUD',
+    CHF = 'CHF',
+    CNY = 'CNY',
 }
