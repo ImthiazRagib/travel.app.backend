@@ -23,7 +23,7 @@ export class FlightsService {
       throw new Error('Airline not found or not verified');
     }
 
-    //check if flightNumber already exists
+    //* check if flightNumber already exists
     const existingFlight = await this.flightModel.findOne({
       where: {
         flightNumber: dto.flightNumber,
@@ -34,9 +34,11 @@ export class FlightsService {
 
     if (existingFlight) {
       const now = new Date();
-      const newDeparture = new Date(dto.departureTime); // from request
+      const newDeparture = new Date(dto.departureTime); //* from request
+      const existingDeparture = new Date(existingFlight.departureTime); //* from db
 
-      // 🚫 1) Must not be past
+
+      // * Must not be past
       if (newDeparture.getTime() < now.getTime()) {
         throw new HttpException(
           'Departure time cannot be in the past',
@@ -44,16 +46,15 @@ export class FlightsService {
         );
       }
 
-      const diffMs = newDeparture.getTime() - now.getTime();
+      const diffMs = newDeparture.getTime() - existingDeparture.getTime(); //* compare with old flight
       const diffHours = diffMs / (1000 * 60 * 60);
 
       const isSameFlight =
         existingFlight.flightNumber === dto.flightNumber &&
         existingFlight.stops === dto.stops;
 
-      // 🚫 2) Must not be within next 48 hours
+      // * Must not be within next 48 hours - 
       if (isSameFlight && diffHours < 48) {
-        //! NOT FIXED
         throw new HttpException(
           'Flight cannot be scheduled within 48 hours of an existing flight with the same flight number and stops',
           HttpStatus.CONFLICT,
