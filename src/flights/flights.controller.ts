@@ -7,11 +7,12 @@ import { Roles } from 'src/common/decorator/roles.decorator';
 import { EnumRoles } from 'src/users/enums/roles.enum';
 import { FlightsQueryDto } from './dtos/flights-query.dto';
 
-@UseGuards(JwtAuthGuard, RolesGuard)
+
 @Controller('flights')
 export class FlightsController {
-  constructor(private flightService: FlightsService) {}
-
+  constructor(private flightService: FlightsService) { }
+  
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(EnumRoles.SUPERADMIN, EnumRoles.ADMIN, EnumRoles.AIRLINECO)
   @Post()
   addFlight(@Body() dto: CreateFlightDto) {
@@ -19,7 +20,8 @@ export class FlightsController {
   }
 
   @Get()
-  getFlights(@Query() query: FlightsQueryDto) {
+  getFlights(@Query() query: FlightsQueryDto | any) {
+    console.log("🚀 ~ FlightsController ~ getFlights ~ query:", query)
     return this.flightService.getFlights(query);
   }
 }

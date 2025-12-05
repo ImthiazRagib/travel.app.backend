@@ -68,15 +68,19 @@ export class FlightsService {
   }
 
   createQuery(dto: FlightsQueryDto) {
-    const { airlineId, flightNumber, from, to, departureTime, arrivalTime, stops, query, page = 1, limit = 10, } = dto;
+    const { airlines, flightNumber, origin, destination, departureTime, returnDate, triggerTs, maxPrice, passengers, arrivalTime, stops, tripType, query, page = 1, limit = 10, } = dto;
     const offset = (page - 1) * limit;
 
     const where = {};
-    if (airlineId) where['airlineId'] = airlineId;
+    // if (airlines) where['airlineId'] = airlines;
     if (flightNumber) where['flightNumber'] = flightNumber;
-    if (from) where['from'] = from;
-    if (to) where['to'] = to;
+    // if (origin) where['from'] = origin;
+    // if (destination) where['to'] = destination;
     if (departureTime) where['departureTime'] = departureTime;
+    if (returnDate) where['returnDate'] = returnDate;
+    // if (triggerTs) where['triggerTs'] = triggerTs;
+    // if (maxPrice) where['maxPrice'] = maxPrice;
+    // if (passengers) where['passengers'] = passengers;
     if (arrivalTime) where['arrivalTime'] = arrivalTime;
     if (stops) where['stops'] = stops;
 
@@ -120,7 +124,7 @@ export class FlightsService {
       total,
       currentPage: page,
       totalPages: Math.ceil(total / limit),
-      limit,
+      limit
     }
   }
 }
